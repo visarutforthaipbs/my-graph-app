@@ -1,0 +1,20 @@
+.footer-logo {
+  width: 150px; /* Set your desired width */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: transparent;
+}
+
+.footer img {
+  height: 50px;
+  margin-left: 0.5rem;
+}

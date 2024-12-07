@@ -1,0 +1,45 @@
+/* index.css */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap");
+
+:root {
+  font-family: "Prompt", system-ui, Helvetica, Arial, sans-serif !important;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --background-color: #fff5dc;
+  --text-color: #3e2723;
+  --accent-color: #c19a6b;
+  --hover-color: #b8865b;
+}
+
+body {
+  margin: 0;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--hover-color);
+}
+
+button {
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-color);
+  color: var(--background-color);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--hover-color);
+}

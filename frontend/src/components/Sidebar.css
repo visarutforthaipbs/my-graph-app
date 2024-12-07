@@ -1,0 +1,29 @@
+.sidebar {
+  background-color: #f4e9db; /* Light earth-tone background */
+  padding: 20px;
+  width: 300px;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 2px solid #c19a6b;
+}
+
+.sidebar-title {
+  font-size: 50px;
+  color: #3e2723;
+  margin-bottom: 16px;
+  line-height: 100%;
+  font-weight: 400;
+}
+
+.sidebar-text {
+  font-size: 16px;
+  color: #5d4037;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.sidebar p:last-child {
+  margin-bottom: 0;
+}

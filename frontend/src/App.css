@@ -1,0 +1,36 @@
+.app {
+  display: flex;
+  height: 100vh;
+  background-color: #f5f5dc; /* Beige */
+  color: #3e2723; /* Dark brown */
+}
+
+.sidebar {
+  flex: 0.3;
+  padding: 2rem;
+}
+
+.graph-container {
+  flex: 1;
+  background-color: #fff5e1; /* Light cream */
+}
+
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+button {
+  background-color: #c19a6b; /* Earth-tone button */
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #b8865b; /* Slightly darker on hover */
+}

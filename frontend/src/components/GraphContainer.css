@@ -1,0 +1,49 @@
+/* Node Label Styles */
+.node-label {
+  font-family: "Prompt", sans-serif;
+  font-size: 18px; /* Increased font size for better readability */
+  font-weight: bold; /* Make text stand out */
+  color: #3e2723; /* Darker tone for high contrast */
+  text-align: center;
+  text-shadow: 1px 1px 2px #fff; /* Subtle shadow for clarity */
+  text-wrap: wrap; /* Allow text to wrap */
+  max-width: 80px; /* Limit width for wrapping */
+  white-space: normal; /* Ensure text wraps */
+}
+
+/* Node Container */
+.node {
+  background-color: #c19a6b; /* Earth tone for nodes */
+  border: 2px solid #3e2723; /* Contrast border */
+  border-radius: 50%; /* Rounded nodes */
+  padding: 10px; /* Adjust padding for larger nodes */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px; /* Ensure enough space for label */
+  height: 50px;
+  position: relative;
+  overflow: visible; /* Allow labels to be visible outside node bounds */
+}
+
+/* Edge Styles */
+.edge {
+  width: 3px;
+  stroke: #3e2723; /* Earth tone for edges */
+  stroke-opacity: 0.8; /* Slight transparency for a softer look */
+}
+
+.edge[type="child"] {
+  stroke: #d95f62; /* Complementary red for child edges */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .node-label {
+    font-size: 12px; /* Adjust font size for smaller screens */
+  }
+  .node {
+    width: 40px;
+    height: 40px;
+  }
+}
