@@ -3,7 +3,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const app = express();
-const PORT = 5001;
+const PORT = process.env.PORT || 5001; // Use Render's PORT environment variable or fallback to 5001 for local testing
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 // In-memory graph data
 let graphData = {
