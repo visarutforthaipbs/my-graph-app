@@ -22,26 +22,11 @@ const App = () => {
       .then((response) => {
         const nodes = response.data.nodes.map((node) => ({
           data: node,
-          position: node.position || undefined, // Ensure position is set
+          position: node.position || undefined,
         }));
         const edges = response.data.edges.map((edge) => ({
           data: edge,
         }));
-
-        // Check if the main node is missing
-        const hasMainNode = nodes.some((node) => node.data.id === "root");
-
-        if (!hasMainNode) {
-          const mainNode = {
-            data: {
-              id: "root",
-              label: "พลังความม่วนของคนอีสาน",
-            },
-            position: { x: 300, y: 300 },
-          };
-          nodes.push(mainNode);
-        }
-
         setElements([...nodes, ...edges]);
         setLoading(false);
       })
@@ -63,7 +48,7 @@ const App = () => {
         return (
           position &&
           Math.abs(position.x - x) < 150 &&
-          Math.abs(position.y - y) < 250
+          Math.abs(position.y - y) < 150
         );
       });
     } while (isOverlapping);
@@ -90,6 +75,7 @@ const App = () => {
           }
         : generateUniquePosition(),
     };
+
     const newEdge = selectedNodeId
       ? { data: { source: selectedNodeId, target: newId } }
       : null;
