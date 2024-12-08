@@ -13,11 +13,12 @@ const App = () => {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const apiBaseUrl = import.meta.env.VITE_BACKEND_URL;
 
   // Fetch graph data from the backend
   useEffect(() => {
     axios
-      .get("http://localhost:5001/graph")
+      .get(`${apiBaseUrl}/graph`)
       .then((response) => {
         const nodes = response.data.nodes.map((node) => ({
           data: node,
@@ -26,6 +27,21 @@ const App = () => {
         const edges = response.data.edges.map((edge) => ({
           data: edge,
         }));
+
+        // Check if the main node is missing
+        const hasMainNode = nodes.some((node) => node.data.id === "root");
+
+        if (!hasMainNode) {
+          const mainNode = {
+            data: {
+              id: "root",
+              label: "พลังความม่วนของคนอีสาน",
+            },
+            position: { x: 300, y: 300 },
+          };
+          nodes.push(mainNode);
+        }
+
         setElements([...nodes, ...edges]);
         setLoading(false);
       })
@@ -34,7 +50,7 @@ const App = () => {
         setError("Failed to load graph data");
         setLoading(false);
       });
-  }, []);
+  }, [apiBaseUrl]);
 
   const generateUniquePosition = () => {
     let x, y;
@@ -46,7 +62,7 @@ const App = () => {
         const position = el.position;
         return (
           position &&
-          Math.abs(position.x - x) < 150 && // Avoid overlapping by at least 50px
+          Math.abs(position.x - x) < 150 &&
           Math.abs(position.y - y) < 250
         );
       });
@@ -71,8 +87,8 @@ const App = () => {
         ? {
             x: referenceNode.position.x + 50,
             y: referenceNode.position.y + 50,
-          } // Position near the selected node
-        : generateUniquePosition(), // Ensure unique position
+          }
+        : generateUniquePosition(),
     };
     const newEdge = selectedNodeId
       ? { data: { source: selectedNodeId, target: newId } }
@@ -82,11 +98,10 @@ const App = () => {
       ? [...elements, newNode, newEdge]
       : [...elements, newNode];
 
-    setElements(updatedElements); // Update state instantly for UI
+    setElements(updatedElements);
 
-    // Sync new node and edge with the backend
     try {
-      await axios.post("http://localhost:5001/graph", {
+      await axios.post(`${apiBaseUrl}/graph`, {
         nodes: updatedElements
           .filter((el) => !el.data.source)
           .map((el) => ({
@@ -106,7 +121,6 @@ const App = () => {
     setNodeName("");
   };
 
-  // Handle deleting a node
   const handleDeleteNode = async () => {
     if (selectedNodeId) {
       const updatedElements = elements.filter(
@@ -117,9 +131,8 @@ const App = () => {
       );
       setElements(updatedElements);
 
-      // Sync with the backend
       try {
-        await axios.post("http://localhost:5001/graph", {
+        await axios.post(`${apiBaseUrl}/graph`, {
           nodes: updatedElements
             .filter((el) => !el.data.source)
             .map((el) => ({
@@ -140,7 +153,6 @@ const App = () => {
     }
   };
 
-  // Handle updating node positions
   const updateNodePositions = async (updatedElements) => {
     const nodes = updatedElements.filter((el) => !el.data.source);
     const edges = updatedElements.filter((el) => el.data.source);
@@ -148,10 +160,10 @@ const App = () => {
     setElements(updatedElements);
 
     try {
-      await axios.post("http://localhost:5001/graph", {
+      await axios.post(`${apiBaseUrl}/graph`, {
         nodes: nodes.map((node) => ({
           ...node.data,
-          position: node.position || undefined, // Save positions
+          position: node.position || undefined,
         })),
         edges: edges.map((edge) => edge.data),
       });
