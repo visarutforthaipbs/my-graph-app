@@ -90,7 +90,12 @@ app.post("/add-node", async (req, res) => {
   }
 
   try {
-    const newNode = new Node({ id, label, position, parent: parent || null });
+    const newNode = new Node({
+      id,
+      label,
+      position,
+      parent: parent || null, // Set parent if provided
+    });
     await newNode.save();
 
     res.json({ message: "Node added successfully!", newNode });
