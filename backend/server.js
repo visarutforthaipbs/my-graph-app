@@ -23,6 +23,7 @@ mongoose
 const nodeSchema = new mongoose.Schema({
   id: String,
   label: String,
+  parent: { type: String, default: null }, // Add parent field
   position: {
     x: Number,
     y: Number,
@@ -44,7 +45,16 @@ app.get("/graph", async (req, res) => {
   try {
     const nodes = await Node.find();
     const edges = await Edge.find();
-    res.json({ nodes, edges });
+
+    // Ensure parent relationships are included
+    const graphData = nodes.map((node) => ({
+      id: node.id,
+      label: node.label,
+      parent: node.parent || null, // Include parent info
+      position: node.position,
+    }));
+
+    res.json({ nodes: graphData, edges });
   } catch (error) {
     console.error("Error fetching graph data:", error);
     res.status(500).json({ error: "Failed to fetch graph data" });
@@ -69,9 +79,9 @@ app.post("/graph", async (req, res) => {
   }
 });
 
-// Add a new node
+// Add a new node with parent support
 app.post("/add-node", async (req, res) => {
-  const { id, label, position } = req.body;
+  const { id, label, position, parent } = req.body;
 
   if (!id || !label || !position) {
     return res
@@ -80,7 +90,7 @@ app.post("/add-node", async (req, res) => {
   }
 
   try {
-    const newNode = new Node({ id, label, position });
+    const newNode = new Node({ id, label, position, parent: parent || null });
     await newNode.save();
 
     res.json({ message: "Node added successfully!", newNode });
