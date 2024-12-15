@@ -3,6 +3,9 @@
   height: 100vh;
   background-color: #f5f5dc; /* Beige */
   color: #3e2723; /* Dark brown */
+  font-family: "Prompt", sans-serif; /* Change font style */
+  font-size: 14px; /* Adjust font size */
+  font-weight: 500; /* Make it bold */
 }
 
 .sidebar {
@@ -13,8 +16,12 @@
 .graph-container {
   flex: 1;
   background-color: #fff5e1; /* Light cream */
+  transition: margin-left 0.3s ease;
 }
 
+.graph-container.full-width {
+  margin-left: 0; /* Graph takes up the full screen */
+}
 
 .popup-content {
   display: flex;
@@ -33,4 +40,19 @@ button {
 
 button:hover {
   background-color: #b8865b; /* Slightly darker on hover */
+}
+
+/* Custom Toast Container Styling */
+.custom-toast-container .Toastify__toast {
+  font-family: "Prompt", sans-serif; /* Change font style */
+  font-size: 14px; /* Adjust font size */
+  font-weight: 500; /* Make it bold */
+  color: #3e2723; /* Dark brown text for an earth tone */
+  background-color: #fdf6e3; /* Light earth tone background */
+  border: 1px solid #d7ccc8; /* Soft border */
+  border-radius: 8px; /* Rounded corners */
+}
+
+.custom-toast-container .Toastify__toast-body {
+  font-family: "Prompt", sans-serif;
 }
