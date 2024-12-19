@@ -59,7 +59,7 @@
   width: 100%;
   height: 100%;
   background-color: whitesmoke; /* Light cream */
-  background-image: url("src/assets/bg-1.svg"); /* Path to your SVG */
+  background-image: url("/bg-1.svg"); /* Path to your SVG */
   background-size: contain; /* Ensures the SVG covers the entire area */
   background-position: center; /* Centers the SVG */
   background-repeat: repeat; /* Prevents repeating */

@@ -22,7 +22,7 @@ const Sidebar = ({ onToggle }) => {
         <div>
           <div className="sidebar-logo">
             <img
-              src="src/assets/logo-gif-4.gif"
+              src="/logo-gif-4.gif"
               alt="Animated Logo"
               className="sidebar-logo-image"
             />
