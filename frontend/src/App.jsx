@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import GraphContainer from "./components/GraphContainer";
 import Sidebar from "./components/Sidebar";
 import LogoFooter from "./components/LogoFooter";
@@ -15,41 +15,49 @@ const App = () => {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true); // Manage sidebar state
   const apiBaseUrl = import.meta.env.VITE_BACKEND_URL;
 
-  // Color mapping for main nodes
+  const handleSidebarToggle = (isOpen) => {
+    setIsSidebarOpen(isOpen);
+  };
+
+  const handleError = (errMsg) => {
+    setError(errMsg);
+    toast.error(errMsg);
+    setTimeout(() => setError(null), 5000); // Reset error after 5 seconds
+  };
+
   const getNodeColor = (mainDomain) => {
     switch (mainDomain) {
       case "ฟังม่วน":
-        return "#D2691E"; // Chocolate
+        return "#D2691E";
       case "เบิ่งม่วน":
-        return "#A67B5B"; // Bronze
+        return "#A67B5B";
       case "กินม่วน":
-        return "#8F9779"; // Olive Gray
+        return "#8F9779";
       case "เที่ยวม่วน":
-        return "#E3B448"; // Golden Sand
+        return "#E3B448";
       case "ใช้ม่วน":
-        return "#C19A6B"; // Light Brown
+        return "#C19A6B";
       default:
-        return "#B88A4F"; // Default Muted Tan
+        return "#B88A4F";
     }
   };
-  // Find the main domain by traversing parent links
+
   const findMainDomain = (nodeId, nodes) => {
     let currentNode = nodes.find((n) => n.data?.id === nodeId);
     while (currentNode && currentNode.data?.parent) {
       currentNode = nodes.find(
         (n) => n.data?.label === currentNode.data.parent
       );
-      if (!currentNode) break;
     }
     return currentNode ? currentNode.data.label : null;
   };
 
-  // Preprocess elements to assign background colors
   const preprocessElements = (elements) => {
     return elements.map((el) => {
-      if (el.data && el.data.parent) {
+      if (el.data?.parent) {
         const mainDomain = findMainDomain(el.data.id, elements);
         return {
           ...el,
@@ -60,7 +68,11 @@ const App = () => {
     });
   };
 
-  // Fetch graph data from backend
+  const processedElements = useMemo(
+    () => preprocessElements(elements),
+    [elements]
+  );
+
   useEffect(() => {
     axios
       .get(`${apiBaseUrl}/graph`)
@@ -72,31 +84,37 @@ const App = () => {
               findMainDomain(node.id, response.data.nodes)
             ),
           },
-          position: node.position || undefined,
+          position: node.position || {
+            x: Math.random() * 800,
+            y: Math.random() * 600,
+          },
         }));
         const edges = response.data.edges.map((edge) => ({ data: edge }));
         setElements([...nodes, ...edges]);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching graph data:", error);
-        setError("Failed to load graph data");
+        const errMsg =
+          error.response?.data?.message || "Failed to load graph data";
+        handleError(errMsg);
         setLoading(false);
       });
   }, [apiBaseUrl]);
 
-  // Add a new node
   const handleAddNode = async () => {
     if (!nodeName.trim()) {
       toast.error("Node name cannot be empty");
       return;
     }
 
-    const newId = `node-${Date.now()}`;
-    const referenceNode = selectedNodeId
-      ? elements.find((el) => el.data.id === selectedNodeId)
-      : null;
+    const existingNode = elements.find((el) => el.data?.label === nodeName);
+    if (existingNode) {
+      toast.error("Node with this name already exists");
+      return;
+    }
 
+    const newId = `node-${Date.now()}`;
+    const referenceNode = elements.find((el) => el.data.id === selectedNodeId);
     const mainDomain = referenceNode
       ? findMainDomain(referenceNode.data.id, elements)
       : null;
@@ -116,77 +134,81 @@ const App = () => {
     const newEdge = selectedNodeId
       ? { data: { source: selectedNodeId, target: newId } }
       : null;
-
     const updatedElements = newEdge
       ? [...elements, newNode, newEdge]
       : [...elements, newNode];
 
     setElements(updatedElements);
 
-    try {
-      await axios.post(`${apiBaseUrl}/graph`, {
+    await axios
+      .post(`${apiBaseUrl}/graph`, {
         nodes: updatedElements
           .filter((el) => !el.data.source)
-          .map((el) => ({ ...el.data, position: el.position || undefined })),
+          .map((el) => ({ ...el.data, position: el.position })),
         edges: updatedElements
           .filter((el) => el.data.source)
           .map((el) => el.data),
-      });
-      toast.success("เพิ่มจุดความม่วนเรียบร้อย"); // Success toast
-    } catch (error) {
-      toast.error("Error adding new node. Please try again!"); // Error toast
-      console.error("Error saving new node:", error);
-    }
+      })
+      .then(() => toast.success("Node added successfully"))
+      .catch(() => toast.error("Error adding node"));
 
     setPopupOpen(false);
     setNodeName("");
   };
 
-  // Delete a node
   const handleDeleteNode = async () => {
-    if (selectedNodeId) {
-      const updatedElements = elements.filter(
-        (el) =>
-          el.data.id !== selectedNodeId &&
-          el.data.source !== selectedNodeId &&
-          el.data.target !== selectedNodeId
-      );
-      setElements(updatedElements);
+    const updatedElements = elements.filter(
+      (el) =>
+        el.data.id !== selectedNodeId &&
+        el.data.source !== selectedNodeId &&
+        el.data.target !== selectedNodeId
+    );
+    setElements(updatedElements);
 
-      try {
-        await axios.post(`${apiBaseUrl}/graph`, {
-          nodes: updatedElements
-            .filter((el) => !el.data.source)
-            .map((el) => ({ ...el.data, position: el.position || undefined })),
-          edges: updatedElements
-            .filter((el) => el.data.source)
-            .map((el) => el.data),
-        });
-        toast.success("ลบสำเร็จแล้ว"); // Success toast
-      } catch (error) {
-        toast.error("Error deleting node. Please try again!"); // Error toast
-        console.error("Error deleting node:", error);
-      }
+    await axios
+      .post(`${apiBaseUrl}/graph`, {
+        nodes: updatedElements
+          .filter((el) => !el.data.source)
+          .map((el) => ({ ...el.data, position: el.position })),
+        edges: updatedElements
+          .filter((el) => el.data.source)
+          .map((el) => el.data),
+      })
+      .then(() => toast.success("Node deleted successfully"))
+      .catch(() => toast.error("Error deleting node"));
 
-      setPopupOpen(false);
-      setSelectedNodeId(null);
-    }
+    setPopupOpen(false);
+    setSelectedNodeId(null);
   };
 
   return (
     <div className="app">
-      {loading && <p>กำลังโหลดข้อมูล...</p>}
+      {loading && <div className="loading-spinner"></div>}
       {error && <p className="error">{error}</p>}
-      <Sidebar />
-      <GraphContainer
-        elements={preprocessElements(elements)}
-        handleNodeClick={(event) => {
-          const node = event.target.data();
-          setSelectedNodeId(node.id);
-          setNodeName(node.label || "");
-          setPopupOpen(true);
+      <Sidebar
+        onToggle={(isOpen) => {
+          setIsSidebarOpen(isOpen);
+          document.body.style.marginLeft = isOpen ? "0px" : "0"; // Adjust layout dynamically
         }}
       />
+
+      <div
+        className="graph-container-wrapper"
+        style={{
+          marginLeft: isSidebarOpen ? "280px" : "0",
+          transition: "margin 0.3s",
+        }}
+      >
+        <GraphContainer
+          elements={processedElements}
+          handleNodeClick={(event) => {
+            const node = event.target.data();
+            setSelectedNodeId(node.id);
+            setNodeName(node.label || "");
+            setPopupOpen(true);
+          }}
+        />
+      </div>
       {popupOpen && (
         <PopupForm
           onClose={() => setPopupOpen(false)}
@@ -198,18 +220,7 @@ const App = () => {
         />
       )}
       <LogoFooter />
-      <ToastContainer
-        className="custom-toast-container" /* Add your custom class */
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
     </div>
   );
 };

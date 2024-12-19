@@ -1,46 +1,47 @@
+/* Graph Container */
+.graph-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
 /* Node Label Styles */
 .node-label {
   font-family: "Prompt", sans-serif;
-  font-size: 18px; /* Increased font size for better readability */
-  font-weight: bold; /* Make text stand out */
-  color: #3e2723; /* Darker tone for high contrast */
+  font-size: 14px;
+  font-weight: bold;
+  color: #3e2723;
   text-align: center;
-  text-shadow: 1px 1px 2px #fff; /* Subtle shadow for clarity */
-  text-wrap: wrap; /* Allow text to wrap */
-  max-width: 80px; /* Limit width for wrapping */
+  text-shadow: 1px 1px 2px #fff;
   white-space: normal; /* Ensure text wraps */
+  max-width: 100px;
 }
 
 /* Node Container */
 .node {
   background-color: #c19a6b; /* Earth tone for nodes */
-  border: 2px solid #3e2723; /* Contrast border */
-  border-radius: 50%; /* Rounded nodes */
-  padding: 10px; /* Adjust padding for larger nodes */
+  border: 2px solid #3e2723;
+  border-radius: 50%;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px; /* Ensure enough space for label */
-  height: 50px;
-  position: relative;
-  overflow: visible; /* Allow labels to be visible outside node bounds */
 }
 
 /* Edge Styles */
 .edge {
-  width: 3px;
-  stroke: #3e2723; /* Earth tone for edges */
-  stroke-opacity: 0.8; /* Slight transparency for a softer look */
-}
-
-.edge[type="child"] {
-  stroke: #d95f62; /* Complementary red for child edges */
+  stroke: #3e2723;
+  stroke-width: 3px;
+  stroke-opacity: 0.8;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .node-label {
-    font-size: 12px; /* Adjust font size for smaller screens */
+    font-size: 12px;
   }
   .node {
     width: 40px;

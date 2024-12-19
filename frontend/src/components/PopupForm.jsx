@@ -9,10 +9,18 @@ const PopupForm = ({
   setNodeName,
   nodeId,
 }) => {
+  const handleSubmit = () => {
+    if (!nodeName.trim()) {
+      alert("กรุณาใส่สิ่งที่คิดว่าเป็นความม่วน!");
+      return;
+    }
+    onSubmit();
+  };
+
   return (
-    <div className="popup">
+    <div className="popup" role="dialog" aria-labelledby="popup-header">
       <div className="popup-content">
-        <h2 className="popup-header">
+        <h2 id="popup-header" className="popup-header">
           {nodeId ? "เพิ่มความม่วน" : "Add Node"}
         </h2>
         <input
@@ -25,21 +33,16 @@ const PopupForm = ({
           onChange={(e) => setNodeName(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && nodeName.trim()) {
-              onSubmit();
+              handleSubmit();
             }
           }}
+          aria-label="Node Name"
         />
         <div className="popup-buttons">
           <button
             className="popup-button popup-submit"
-            onClick={() => {
-              if (!nodeName.trim()) {
-                alert("กรุณาใส่สิ่งที่คิดว่าเป็นความม่วน!");
-                return;
-              }
-              onSubmit();
-            }}
-            aria-label={nodeId ? "เพิ่มความม่วน" : "Add Node"}
+            onClick={handleSubmit}
+            aria-label="Submit Node"
           >
             {nodeId ? "เพิ่ม" : "Add"}
           </button>

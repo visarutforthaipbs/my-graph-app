@@ -1,8 +1,3 @@
-.footer-logo {
-  width: 150px; /* Set your desired width */
-  height: auto; /* Maintain aspect ratio */
-}
-
 .footer {
   position: absolute;
   bottom: 0;
@@ -14,7 +9,16 @@
   background-color: transparent;
 }
 
-.footer img {
-  height: 50px;
+.footer-logo {
+  width: 120px; /* Adjusted for better scaling */
+  height: auto;
   margin-left: 0.5rem;
+  opacity: 0.5;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .footer-logo {
+    width: 80px;
+  }
 }

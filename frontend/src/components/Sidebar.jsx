@@ -1,23 +1,46 @@
-import "./Sidebar.css"; // Import custom styles
+import { useState } from "react";
+import "./Sidebar.css";
 
-const Sidebar = () => {
+const Sidebar = ({ onToggle }) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+    if (onToggle) onToggle(!isOpen);
+  };
+
   return (
-    <div className="sidebar">
-      <h1 className="sidebar-title">
-        พลัง<strong>ความม่วน</strong>ของบ้านเฮามีหยังแหน่?
-      </h1>
-      <p className="sidebar-text">
-        หากจะหาว่าอะไรบ้างที่จะสามารถเป็น softpower ของภาคอีสานได้
-        เราคงต้องเริ่มจากการสอบถามคนอีสานด้วยกันเอง และสิ่งที่จะสามารถเป็น
-        softpower หรือ creative asset ที่จะสามารถส่งออกไปยังต่างประเทศ
-        ไม่ว่าจะเป็นด้านเศรษฐกิจหรือการเมือง อย่างน้อยๆ ก็ต้องเริ่มจาก
-        <b>ความม่วน</b>
-      </p>
-      <p className="sidebar-text">
-        เพิ่มจุดพลังความม่วน ด้วยการกดที่แต่ล่ะจุดที่อยากเติมเพิ่มได้เลย
-        และพาอีสานไปสู่โลกกันเลย
-      </p>
-    </div>
+    <aside className={`sidebar ${isOpen ? "open" : "closed"}`}>
+      <button
+        className="sidebar-toggle"
+        onClick={handleToggle}
+        aria-label={isOpen ? "Close Sidebar" : "Open Sidebar"}
+      >
+        {isOpen ? "❮" : "❯"}
+      </button>
+      {isOpen && (
+        <div>
+          <div className="sidebar-logo">
+            <img
+              src="src/assets/logo-gif-4.gif"
+              alt="Animated Logo"
+              className="sidebar-logo-image"
+            />
+          </div>
+          <h1 className="sidebar-title">
+            พลัง<strong>ความม่วน</strong>ของบ้านเฮามีหยังแหน่?
+          </h1>
+          <p className="sidebar-text">
+            อีหยังแหน่ที่เฮา อยากอวด อยากอ้าง ชาวบ้านชาวช่อง
+            อีหยังแหน่ที่จะเฮาอยากเอาไปเผยแพร่ ส่งออก มาร่วมกัน คิดต่อ ปักหมุด
+            ความม่วนบ้านเฮา
+          </p>
+          <p className="sidebar-text">
+            เพิ่มจุดพลังความม่วน ด้วยการกดที่แต่ละจุดที่อยากเติมเพิ่มได้เลย!
+          </p>
+        </div>
+      )}
+    </aside>
   );
 };
 
