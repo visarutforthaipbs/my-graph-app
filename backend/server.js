@@ -21,18 +21,18 @@ mongoose
 
 // Mongoose schemas and models
 const nodeSchema = new mongoose.Schema({
-  id: String,
-  label: String,
+  id: { type: String, required: true, unique: true },
+  label: { type: String, required: true },
   parent: { type: String, default: null }, // Add parent field
   position: {
-    x: Number,
-    y: Number,
+    x: { type: Number, required: true },
+    y: { type: Number, required: true },
   },
 });
 
 const edgeSchema = new mongoose.Schema({
-  source: String,
-  target: String,
+  source: { type: String, required: true },
+  target: { type: String, required: true },
 });
 
 const Node = mongoose.model("Node", nodeSchema);
@@ -123,6 +123,34 @@ app.post("/add-edge", async (req, res) => {
   } catch (error) {
     console.error("Error adding edge:", error);
     res.status(500).json({ error: "Failed to add edge" });
+  }
+});
+
+// Update node position
+app.post("/update-node-position", async (req, res) => {
+  const { id, position } = req.body;
+
+  if (!id || !position) {
+    return res
+      .status(400)
+      .json({ error: "Missing required fields: id, position" });
+  }
+
+  try {
+    const updatedNode = await Node.findOneAndUpdate(
+      { id },
+      { position },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedNode) {
+      return res.status(404).json({ error: "Node not found" });
+    }
+
+    res.json({ message: "Node position updated successfully!", updatedNode });
+  } catch (error) {
+    console.error("Error updating node position:", error);
+    res.status(500).json({ error: "Failed to update node position" });
   }
 });
 
